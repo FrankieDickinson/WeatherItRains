@@ -1,15 +1,33 @@
 package com.example.dox.weatheritrains;
 
+import android.Manifest;
+import android.content.Context;
+import android.content.pm.PackageManager;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.design.widget.TabLayout;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
+
+    static TextView placeTextView;
+    static TextView tempTextView;
+    BackGroundTask task;
+
+    Double lat;
+    Double longitude;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -18,12 +36,40 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        placeTextView = findViewById(R.id.nameTextView);
+        tempTextView = findViewById(R.id.temperatureTextView);
+
+
+        LocationManager locationManger = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        String provider = locationManger.getBestProvider(new Criteria(), false);
+
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        Location location = locationManger.getLastKnownLocation(provider);
+
+        lat = location.getLatitude();
+        longitude = location.getLongitude();
+
+
+
+        task = new BackGroundTask(tempTextView, placeTextView);
+        task.execute("http://api.openweathermap.org/data/2.5/weather?lat=" + lat + "&lon=" + longitude + "&appid=41d48be33178aeac998321b4fa0594e8&units=metric");
+
+
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+
             }
         });
     }
