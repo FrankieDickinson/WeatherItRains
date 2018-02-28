@@ -25,12 +25,12 @@ import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
 
-    static TextView placeTextView;
-    static TextView tempTextView;
+    private static TextView placeTextView;
+    private static TextView tempTextView;
     BackGroundTask task;
 
-    Double lat;
-    Double longitude;
+    private Double lat;
+    private Double longitude;
 
     private EditText editTextTitle;
     private EditText editTextMessage;
@@ -73,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Create instance of background task and the execute this task
         task = new BackGroundTask(tempTextView, placeTextView);
-        task.execute("http://api.openweathermap.org/data/2.5/weather?lat=" + lat + "&lon=" + longitude + "&appid=41d48be33178aeac998321b4fa0594e8&units=metric");
+        task.execute("https://api.darksky.net/forecast/cef8d957fb808e8c51e3518242368519/-36.931962,174.846381?units=si&exclude=hourly");
 
 
         // Might use later on
