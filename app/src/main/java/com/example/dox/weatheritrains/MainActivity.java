@@ -73,41 +73,32 @@ public class MainActivity extends AppCompatActivity {
 
         // Create instance of background task and the execute this task
         task = new BackGroundTask(tempTextView, placeTextView);
-        task.execute("https://api.darksky.net/forecast/cef8d957fb808e8c51e3518242368519/-36.931962,174.846381?units=si&exclude=hourly");
-
-
-        // Might use later on
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-            }
-        });
-
+        task.execute("https://api.darksky.net/forecast/"+ APIContract.API_KEY+ "/"+ lat + ","+ longitude + "?units=si&exclude=hourly");
 
         // Creating Notifications
         // Remove casts since we are using maven repo
-        editTextTitle = findViewById(R.id.edittext_title);
-        editTextMessage = findViewById(R.id.edittext_message);
-        buttonChannel1 = findViewById(R.id.button_channel1);
-        buttonChannel2 = findViewById(R.id.button_channel2);
+
 
         mNotificationHelper = new NotificationHelper(this);
 
+        // TODO(dox): Create listeners which work based on the weather data
+        /*
         buttonChannel1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sendOnChannel1(editTextTitle.getText().toString(), editTextMessage.getText().toString());
+                sendOnChannel1("WeatherItRains", editTextMessage.getText().toString());
             }
         });
 
         buttonChannel2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sendOnChannel2(editTextTitle.getText().toString(), editTextMessage.getText().toString());
+                sendOnChannel2("WeatherItRains", editTextMessage.getText().toString());
             }
         });
+        */
+
+
     }
 
     public void sendOnChannel1(String title, String message){
