@@ -1,4 +1,4 @@
-package com.example.dox.weatheritrains;
+package com.project.dox.weatheritrains;
 
 /**
  * Created by dox on 1/03/18.

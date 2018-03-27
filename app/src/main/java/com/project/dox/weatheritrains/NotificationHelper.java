@@ -1,4 +1,4 @@
-package com.example.dox.weatheritrains;
+package com.project.dox.weatheritrains;
 
 import android.annotation.TargetApi;
 import android.app.Notification;
@@ -30,6 +30,8 @@ public class NotificationHelper extends ContextWrapper {
         }
 
     }
+
+    // Create multiple channels to manager notifications
 
     @TargetApi(Build.VERSION_CODES.O)
     public void createChannels(){

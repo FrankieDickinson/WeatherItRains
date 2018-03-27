@@ -1,18 +1,13 @@
-package com.example.dox.weatheritrains;
+package com.project.dox.weatheritrains;
 
-import android.content.Context;
-import android.location.LocationManager;
 import android.os.AsyncTask;
-import android.util.Log;
 import android.widget.TextView;
 
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 
 /**
@@ -43,16 +38,12 @@ public class BackGroundTask extends AsyncTask<String, Void, String> {
         HttpURLConnection urlCon = null;
         try {
             url = new URL(urls[0]);
-
             urlCon = (HttpURLConnection) url.openConnection();
-
             InputStream in = urlCon.getInputStream();
-
             InputStreamReader isr = new InputStreamReader(in);
-
             int data = isr.read();
 
-            // Continues when endofStream (-1) is reached
+            // Continues when endOfStream (-1) is reached
             while(data != endOfStream){
                 char current = (char) data;
                 result += current;

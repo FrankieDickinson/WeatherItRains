@@ -1,22 +1,16 @@
-package com.example.dox.weatheritrains;
+package com.project.dox.weatheritrains;
 
 import android.Manifest;
-import android.app.NotificationManager;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
@@ -27,6 +21,8 @@ public class MainActivity extends AppCompatActivity {
 
     private static TextView placeTextView;
     private static TextView tempTextView;
+    private static TextView precipTextView;
+
     BackGroundTask task;
 
     private Double lat;
@@ -49,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
 
         placeTextView = findViewById(R.id.nameTextView);
         tempTextView = findViewById(R.id.temperatureTextView);
-
+        precipTextView = findViewById(R.id.precipitationTextView);
 
         LocationManager locationManger = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         String provider = locationManger.getBestProvider(new Criteria(), false);
@@ -72,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         // Create instance of background task and the execute this task
-        task = new BackGroundTask(tempTextView, placeTextView);
+        task = new BackGroundTask(tempTextView, placeTextView, precipTextView);
         task.execute("https://api.darksky.net/forecast/"+ APIContract.API_KEY+ "/"+ lat + ","+ longitude + "?units=si&exclude=hourly");
 
         // Creating Notifications
@@ -80,6 +76,9 @@ public class MainActivity extends AppCompatActivity {
 
 
         mNotificationHelper = new NotificationHelper(this);
+
+
+
 
         // TODO(dox): Create listeners which work based on the weather data
         /*
@@ -101,7 +100,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void sendOnChannel1(String title, String message){
+    public void schedChannel(String title, String message){
         NotificationCompat.Builder nb = mNotificationHelper.getChannel1Notification(title, message);
         mNotificationHelper.getManager().notify(1, nb.build());
     }
