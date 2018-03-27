@@ -20,20 +20,24 @@ import java.net.URL;
  */
 
 public class BackGroundTask extends AsyncTask<String, Void, String> {
+    // Text view var which will store the locations of temp place and precipitation
+    private TextView temp, place, precipitation;
 
-    TextView temp, place;
-
-    public BackGroundTask(TextView temp, TextView place){
+    // Stores the temp place and precip for this instance
+    public BackGroundTask(TextView temp, TextView place, TextView precipitation){
         this.temp = temp;
         this.place = place;
+        this.precipitation = precipitation;
 
     }
 
-
-
     @Override
-    // Opens a connection and the result in a string
-    protected String doInBackground(String... urls) {
+    /*
+     Overriding this method and constructing an API request which takes 1 or more
+     String URLs as a parameter.
+      */
+    protected String doInBackground(String[] urls) {
+        final int endOfStream = -1;
         String result = "";
         URL url;
         HttpURLConnection urlCon = null;
@@ -48,36 +52,44 @@ public class BackGroundTask extends AsyncTask<String, Void, String> {
 
             int data = isr.read();
 
-            while(data != -1){
+            // Continues when endofStream (-1) is reached
+            while(data != endOfStream){
                 char current = (char) data;
                 result += current;
                 data = isr.read();
-
         }
-
 
             return result;
         }catch(Exception e) {
+
             e.printStackTrace();
         }
 
         return null;
     }
 
-    // Finds the temp in the data and then display's it on screen
+    /*
+    Using the return value from doInBackground sets the
+    city/town if it exists
+    temperature
+    the probability of rain
+     */
     @Override
     protected void onPostExecute(String result){
+        // result is the value returned by doInBackground
         super.onPostExecute(result);
-
 
         String name;
 
         try {
+
             JSONObject json = new JSONObject(result);
 
             JSONObject weatherData = new JSONObject(json.getString("currently"));
 
-            Double Kelvin = Double.parseDouble(weatherData.getString("temperature"));
+            Double celsius = Double.parseDouble(weatherData.getString("temperature"));
+
+            Double rain = Double.parseDouble(weatherData.getString("precipProbability"));
 
 
             if(json.isNull("timezone")){
@@ -85,8 +97,9 @@ public class BackGroundTask extends AsyncTask<String, Void, String> {
             }else {
                 name = json.getString("timezone");
             }
-            temp.setText(String.valueOf(Kelvin));
+            this.temp.setText(String.valueOf(celsius));
             place.setText(name);
+            precipitation.setText(String.valueOf(rain));
 
 
         }catch(Exception e) {
