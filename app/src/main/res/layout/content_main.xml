@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="com.example.dox.weatheritrains.MainActivity"
+    tools:context="com.project.dox.weatheritrains.MainActivity"
     tools:showIn="@layout/activity_main">
 
     <TextView
@@ -27,6 +27,19 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text=""
         android:id="@+id/temperatureTextView"
+        android:textSize="50dp"
+        android:textColor="#fcbe1616"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+
+        />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text=""
+        android:id="@+id/precipitationTextView"
         android:textSize="50dp"
         android:textColor="#fcbe1616"
         android:layout_centerHorizontal="true"

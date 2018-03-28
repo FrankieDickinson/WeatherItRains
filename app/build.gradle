@@ -8,13 +8,13 @@ android {
 
     compileSdkVersion 26
     defaultConfig {
-        applicationId "com.example.dox.weatheritrains"
+        applicationId "com.project.dox.weatheritrains"
         minSdkVersion 19
         targetSdkVersion 26
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        // Access key stored locally or on the server 
+        // Access key stored locally or on the server
         buildConfigField "String", "MY_API_KEY", getMyApiKey("myApiKey")
     }
     buildTypes {
