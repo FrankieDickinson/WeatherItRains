@@ -1,29 +1,37 @@
 package com.project.dox.weatheritrains;
 
 import android.Manifest;
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.webkit.PermissionRequest;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final int REQUEST_FINE = 0;
+    private static final int REQUEST_COARSE = 1;
+
     private static TextView placeTextView;
     private static TextView tempTextView;
     private static TextView precipTextView;
 
-    BackGroundTask task;
+    // TODO change to getter and setter method
+    public BackGroundTask task;
 
     private Double lat;
     private Double longitude;
@@ -39,9 +47,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+      // Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+      // setSupportActionBar(toolbar);
 
         placeTextView = findViewById(R.id.nameTextView);
         tempTextView = findViewById(R.id.temperatureTextView);
@@ -51,25 +60,31 @@ public class MainActivity extends AppCompatActivity {
         String provider = locationManger.getBestProvider(new Criteria(), false);
 
 
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
-        }
-        Location location = locationManger.getLastKnownLocation(provider);
+        // Check if location permissions are enabled and then requests if SDK version is 23 or greater
+       if(checkLocation()){
+           Location location = null;
+           try{
+               location = locationManger.getLastKnownLocation(provider);
+           }catch(SecurityException se){
+               System.err.println("Security Exception no permission check");
+           }
 
-        lat = location.getLatitude();
-        longitude = location.getLongitude();
+           // TODO Make sure it doesnt crash if it returns null
+           try{
+               lat = location.getLatitude();
+               longitude = location.getLongitude();
+
+           }catch(NullPointerException npe){
 
 
-        // Create instance of background task and the execute this task
-        task = new BackGroundTask(tempTextView, placeTextView, precipTextView);
-        task.execute("https://api.darksky.net/forecast/"+ APIContract.API_KEY+ "/"+ lat + ","+ longitude + "?units=si&exclude=hourly");
+           }
+
+           // Create instance of background task and the execute this task
+           task = new BackGroundTask(tempTextView, placeTextView, precipTextView);
+           task.execute("https://api.darksky.net/forecast/"+ APIContract.API_KEY+ "/"+ lat + ","+ longitude + "?units=si&exclude=hourly");
+
+       }
+
 
         // Creating Notifications
         // Remove casts since we are using maven repo
@@ -78,28 +93,45 @@ public class MainActivity extends AppCompatActivity {
         mNotificationHelper = new NotificationHelper(this);
 
 
+    }
+
+    public void useLocation(){
 
 
-        // TODO(dox): Create listeners which work based on the weather data
-        /*
-        buttonChannel1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                sendOnChannel1("WeatherItRains", editTextMessage.getText().toString());
-            }
-        });
-
-        buttonChannel2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                sendOnChannel2("WeatherItRains", editTextMessage.getText().toString());
-            }
-        });
-        */
 
 
     }
 
+
+    // Users the location gathered from the phones gps
+    @TargetApi(Build.VERSION_CODES.M)
+    public boolean checkLocation() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+            return true;
+        }else{
+            if(shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)){
+                // Display message which explains why user should enable permission
+            }
+            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_FINE);
+
+        }
+        return false;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+
+        if (requestCode == REQUEST_FINE) {
+
+            if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                useLocation();
+                return;
+            }
+
+            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+    }
     public void schedChannel(String title, String message){
         NotificationCompat.Builder nb = mNotificationHelper.getChannel1Notification(title, message);
         mNotificationHelper.getManager().notify(1, nb.build());
