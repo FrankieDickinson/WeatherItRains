@@ -49,8 +49,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
-      // Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-      // setSupportActionBar(toolbar);
+          // Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+          // setSupportActionBar(toolbar);
 
         placeTextView = findViewById(R.id.nameTextView);
         tempTextView = findViewById(R.id.temperatureTextView);
@@ -58,15 +58,12 @@ public class MainActivity extends AppCompatActivity {
 
 
         // Check if location permissions are enabled and then requests if SDK version is 23 or greater
-       if(findLocation()){
-           // If we have found the location then we can use the location
-        useLocation();
-       }
+       findLocation();
 
 
-           // Create instance of background task and the execute this task
-           task = new BackGroundTask(tempTextView, placeTextView, precipTextView);
-           task.runBackgroundTask(lat, longitude);
+        // Init instance of background task and then run the helper method
+        task = new BackGroundTask(tempTextView, placeTextView, precipTextView);
+        task.runBackgroundTask(lat, longitude);
 
 
         // Creating Notifications
@@ -80,7 +77,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-    public void useLocation(){
+    public void useLocation() {
         LocationManager locationManger = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         String provider = locationManger.getBestProvider(new Criteria(), false);
 
@@ -108,16 +105,16 @@ public class MainActivity extends AppCompatActivity {
 
     // Users the location gathered from the phones gps
     @TargetApi(Build.VERSION_CODES.M)
-    public boolean findLocation() {
+    public void findLocation() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
-            return true;
+            useLocation();
         }else{
             if(shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)){
                 // Display message which explains why user should enable permission
             }
             requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_FINE);
-            return false;
+            return;
         }
     }
 
