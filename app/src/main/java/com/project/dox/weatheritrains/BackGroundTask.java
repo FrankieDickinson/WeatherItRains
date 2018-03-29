@@ -59,6 +59,19 @@ public class BackGroundTask extends AsyncTask<String, Void, String> {
         return null;
     }
 
+    // Method which checks the url before calling the method so it can fail safely
+    public void runBackgroundTask(Double lat, Double longitude){
+
+        if(lat == null|| longitude == null){
+            // TODO fail gracefully
+        }
+
+        this.execute("https://api.darksky.net/forecast/"+ APIContract.API_KEY+ "/"+ lat + ","+ longitude + "?units=si&exclude=hourly");
+
+    }
+
+
+
     /*
     Using the return value from doInBackground sets the
     city/town if it exists

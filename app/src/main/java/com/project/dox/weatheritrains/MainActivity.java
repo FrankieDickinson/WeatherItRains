@@ -56,56 +56,59 @@ public class MainActivity extends AppCompatActivity {
         tempTextView = findViewById(R.id.temperatureTextView);
         precipTextView = findViewById(R.id.precipitationTextView);
 
-        LocationManager locationManger = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        String provider = locationManger.getBestProvider(new Criteria(), false);
-
 
         // Check if location permissions are enabled and then requests if SDK version is 23 or greater
-       if(checkLocation()){
-           Location location = null;
-           try{
-               location = locationManger.getLastKnownLocation(provider);
-           }catch(SecurityException se){
-               System.err.println("Security Exception no permission check");
-           }
+       if(findLocation()){
+           // If we have found the location then we can use the location
+        useLocation();
+       }
 
-           // TODO Make sure it doesnt crash if it returns null
-           try{
-               lat = location.getLatitude();
-               longitude = location.getLongitude();
-
-           }catch(NullPointerException npe){
-
-
-           }
 
            // Create instance of background task and the execute this task
            task = new BackGroundTask(tempTextView, placeTextView, precipTextView);
-           task.execute("https://api.darksky.net/forecast/"+ APIContract.API_KEY+ "/"+ lat + ","+ longitude + "?units=si&exclude=hourly");
-
-       }
+           task.runBackgroundTask(lat, longitude);
 
 
         // Creating Notifications
         // Remove casts since we are using maven repo
-
 
         mNotificationHelper = new NotificationHelper(this);
 
 
     }
 
+
+
+
     public void useLocation(){
+        LocationManager locationManger = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        String provider = locationManger.getBestProvider(new Criteria(), false);
 
 
+        Location location = null;
+        try{
+            location = locationManger.getLastKnownLocation(provider);
+        }catch(SecurityException se){
+            System.err.println("Security Exception no permission check");
+        }
 
+        try{
+            lat = location.getLatitude();
+            longitude = location.getLongitude();
+
+        }catch(NullPointerException npe){
+
+
+        }
+
+        // TODO Make sure it doesn't crash if it returns null
 
     }
 
 
     // Users the location gathered from the phones gps
     @TargetApi(Build.VERSION_CODES.M)
-    public boolean checkLocation() {
+    public boolean findLocation() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
             return true;
@@ -114,9 +117,8 @@ public class MainActivity extends AppCompatActivity {
                 // Display message which explains why user should enable permission
             }
             requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_FINE);
-
+            return false;
         }
-        return false;
     }
 
     @Override
