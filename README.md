@@ -5,7 +5,7 @@ Uses a constraint layout and async background notifications. Layout is in Alpha 
 purposes.
 
 Support for a variety of SDK versions. Works well on my test device SDK version 23. 
-Using timers allows the user to be able to to set when the notifications are recieved. 
+Using timers allows the user to be able to set when the notifications are recieved. 
 If no time is set then a default value is used. This default value will be displayed to the user when they first launch the 
 application. 
 
